@@ -2,4 +2,5 @@ hx711
 logbook
 RPi.GPIO
 requests
+pytz
 git+https://github.com/coding-world/Python_DHT.git

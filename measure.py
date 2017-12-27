@@ -1,15 +1,18 @@
+import datetime
 import json
+import pytz
 import time
 
 import logbook
 import os
+import requests
 from RPi.GPIO import cleanup
 
 from lib.scale import BeeHiveScale
 from lib.dht import DHTSensorController
 import settings
 
-mail_log_settings = json.load(
+secrets = json.load(
     open(
         os.path.join(
             os.path.dirname(__name__),
@@ -17,7 +20,8 @@ mail_log_settings = json.load(
         ),
         "r"
     )
-)["logging"]
+)
+mail_log_settings = secrets["logging"]
 
 logger = logbook.NestedSetup([
     logbook.NullHandler(),
@@ -85,6 +89,7 @@ def read_to_json(scale, dht):
     _humidity = dht.humidity
     logbook.info("DHT: {0}°C and {1}%rF".format(_temperature, _humidity))
     return json.dumps({
+        "timestamp": datetime.datetime.now(pytz.timezone('Europe/Berlin')).isoformat(),
         "weight": {
             "value": acquire_weights(scale_obj=scale),
             "unit": "kg"
@@ -101,6 +106,21 @@ def read_to_json(scale, dht):
     })
 
 
+def send_to_server(data):
+    token = secrets["token"]
+    response = requests.post(
+        url=secrets["collector_url"],
+        data={
+            "token": token,
+            "data": data
+        }
+    )
+    if response.status_code != 200:
+        raise Exception("data submission was not successfull: status code {code}".format(
+            code=response.status_code
+        ))
+
+
 if __name__ == "__main__":
     with logger.applicationbound():
         with logbook.catch_exceptions():
@@ -112,6 +132,6 @@ if __name__ == "__main__":
                 dht = DHTSensorController(
                     gpio_pin=17
                 )
-                print(read_to_json(scale=scale, dht=dht))
+                send_to_server(data=read_to_json(scale=scale, dht=dht))
             finally:
                 cleanup()
