@@ -15,7 +15,7 @@ import settings
 secrets = json.load(
     open(
         os.path.join(
-            os.path.dirname(__name__),
+            os.path.dirname(__file__),
             "secrets.json"
         ),
         "r"
