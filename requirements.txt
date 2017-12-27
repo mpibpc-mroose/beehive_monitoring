@@ -1,0 +1,5 @@
+hx711
+logbook
+RPi.GPIO
+requests
+git+https://github.com/coding-world/Python_DHT.git

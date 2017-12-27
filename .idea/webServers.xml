@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="78a96672-80ed-4cd5-aaca-6b1b43b39486" name="Bienenwaage" url="http://192.168.178.35">
+        <fileTransfer host="192.168.178.35" port="22" rootFolder="/home/pi/beehive_monitor" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
